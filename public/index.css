@@ -1,0 +1,156 @@
+body {
+    display: flex;
+    justify-content: center;
+    -webkit-touch-callout: none;
+}
+
+.tile {
+    width: 673px;
+    background-color: #FAFAFA;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    position: relative;
+}
+
+.tile .tile-header {
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+}
+
+.tile:hover {
+    box-shadow: 0 2px 6px 0 rgba(197,186,186,0.50);
+    background: #F3F3F3;
+}
+
+.tile-header {
+    border-radius: 20px;
+    padding: 20px 20px 0 20px;
+}
+
+.tile.critical {
+    display: block;
+}
+
+.tile.critical .tile-header {
+    background-color: #DB5341;
+    border-radius: 20px 20px 0 0;
+    padding-bottom: 40px;
+}
+
+.tile.critical .description {
+    border-radius: 20px;
+    padding-top: 20px;
+    background-color: #FAFAFA;
+    margin-top: -20px;
+}
+
+.tile:hover > div.description {
+    background: #F3F3F3;
+}
+
+.tile .title {
+    display: flex;
+    align-items: center;
+    height: 55px;
+}
+
+.tile .title .text {
+    font-family: Arial-BoldMT, sans-serif;
+    font-size: 24px;
+    color: #333333;
+}
+
+.tile .title .icon {
+    margin-right: 15px;
+}
+
+.tile .tile-header .main-info {
+    display: flex;
+    justify-content: space-between;
+    font-family: ArialMT, sans-serif;
+    font-size: 18px;
+    color: #333333;
+    margin-top: 15px;
+}
+
+.tile.critical .tile-header .main-info,
+.tile.critical .tile-header .title .text {
+    color: #FFFFFF;
+}
+
+.tile .description {
+    font-family: ArialMT, sans-serif;
+    font-size: 20px;
+    color: #333333;
+    padding: 0 20px;
+    background-color: transparent;
+    margin-top: 20px;
+}
+
+.tile.l .description {
+    font-size: 24px;
+}
+
+.tile .data {
+    padding: 20px 20px 0 20px;
+}
+
+.tile .data > div {
+    border-radius: 50px;
+    overflow: hidden;
+    width: 100%;
+    height: 427px;
+}
+
+.image.camera {
+    position: relative;
+}
+
+.tile .description:empty,
+.tile .data:empty {
+    display: none;
+}
+
+@media (max-device-width: 500px) {
+    .tile {
+        width: 100%;
+        padding-bottom: 15px;
+    }
+
+    .tile .title .text {
+        font-size: 14px;
+    }
+
+    .tile.critical .description {
+        padding-top: 15px;
+        margin-top: -15px;
+    }
+
+    .tile .tile-header .main-info {
+        font-size: 12px;
+    }
+
+    .tile .description {
+        padding: 0 15px;
+        font-size: 18px;
+    }
+
+    .tile .data > div {
+        border-radius: 20px;
+        height: calc(100vw - 40px);
+    }
+
+    .tile .data,
+    .tile-header {
+        padding: 15px 15px 0 15px;
+    }
+
+    .tile.critical .tile-header {
+        padding-bottom: 30px;
+    }
+}
