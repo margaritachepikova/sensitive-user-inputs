@@ -8,6 +8,7 @@ var containerHeight = container.getBoundingClientRect().height;
 
 var eventCache = [];
 var prevDiff = -1;
+var pointA = {};
 var currentGestureX = null;
 
 camera.addEventListener('pointerdown', function (event) {
@@ -26,12 +27,18 @@ var removeEvent = function (event) {
     }
 };
 
+var calculateAngle = function (pointA, poinB) {
+    return Math.atan((poinB.y - pointA.y)/(poinB.x - pointA.x));
+};
+
 var prevLeft = 0;
+var counter = 0;
 camera.addEventListener('pointermove', function (event) {
     event.preventDefault();
 
     imageWidth = image.getBoundingClientRect().width;
     imageHeight = image.getBoundingClientRect().height;
+
 
     for (var i = 0; i < eventCache.length; i++) {
         if (event.pointerId === eventCache[i].pointerId) {
@@ -60,17 +67,40 @@ camera.addEventListener('pointermove', function (event) {
         var secondPointY = eventCache[1].clientY;
 
         var curDiff = Math.sqrt(Math.pow(firstPointX - secondPointX, 2) + Math.pow(firstPointY - secondPointY, 2));
-        var newWidth = imageWidth + (curDiff - prevDiff) * 10;
-        var newHeigth = imageHeight * (newWidth/imageWidth);
-        if (prevDiff > 0 && newWidth >= containerWidth && newHeigth >= containerHeight) {
-            image.style.width = newWidth + 'px';
-            currentLeft = parseFloat(camera.style.left) || 0;
-            if (newWidth < Math.abs(currentLeft) + containerWidth) {
-                camera.style.left = currentLeft + Math.abs(currentLeft - containerWidth + newWidth) + 'px';
-            }
+        if (prevDiff === -1) {
+            prevDiff = curDiff;
+            pointA = {
+                x: eventCache[0].clientX,
+                y: eventCache[0].clientY
+            };
         }
-        // Cache the distance for the next move event
-        prevDiff = curDiff;
+        counter++;
+        if (counter < 10) {
+            return;
+        }
+
+        if (Math.abs(prevDiff - curDiff) > 10) {
+            var newWidth = imageWidth + (curDiff - prevDiff) * 10;
+            var newHeigth = imageHeight * (newWidth/imageWidth);
+            if (newWidth >= containerWidth && newHeigth >= containerHeight) {
+                image.style.width = newWidth + 'px';
+                currentLeft = parseFloat(camera.style.left) || 0;
+                if (newWidth < Math.abs(currentLeft) + containerWidth) {
+                    camera.style.left = currentLeft + Math.abs(currentLeft - containerWidth + newWidth) + 'px';
+                }
+            }
+            prevDiff = curDiff;
+        } else {
+            var pointB = {
+                x: eventCache[1].clientX,
+                y: eventCache[1].clientY
+            };
+            var angle = calculateAngle(pointA, pointB);
+            var opacityValue = 100 - angle * 57.2958 * 100 / 180;
+            log('angle', angle);
+            image.style.filter = 'opacity(' + (opacityValue > 50 ? opacityValue : 50) + '%)';
+            pointA = pointB;
+        }
     }
 });
 
@@ -78,20 +108,19 @@ camera.addEventListener('pointerup', function (event) {
     removeEvent(event);
     prevLeft = parseFloat(camera.style.left) || 0;
     prevDiff = -1;
+    counter = 0;
 });
 
 camera.addEventListener('pointercancel', function (event) {
     removeEvent(event);
     currentGestureX = null;
     prevDiff = -1;
+    counter = 0;
 });
 
-function log(prefix, ev) {
+function log(a, b) {
     var o = document.getElementsByClassName('output')[0];
-    var s = prefix + ": pointerID = " + ev.pointerId +
-        " ; pointerType = " + ev.pointerType +
-        " ; isPrimary = " + ev.isPrimary;
-    o.innerHTML += s + " <br>";
+    o.innerHTML += a + ' - ' + b + " <br>";
 }
 
 function clearLog(event) {
